@@ -36,7 +36,12 @@ with sync_playwright() as p:
         press((680,250) if label=='desktop' else (285,248)); page.wait_for_timeout(600)
         page.reload(); page.wait_for_timeout(3000)
         path=root/f'{label}-saved-home.png'; page.screenshot(path=str(path))
-        print(label,'touch' if label=='mobile' else 'mouse','tutorial/win/next/restart/pause/reload screenshots',root,'page errors',errs,flush=True)
+        press((452,220) if label=='desktop' else (291,329)); page.wait_for_timeout(300)
+        for _ in range(6):
+            for xy in ([(446,248),(562,365)] if label=='desktop' else [(191,248),(292,365)]):
+                press(xy); page.wait_for_timeout(100)
+        path=root/f'{label}-loss.png'; page.screenshot(path=str(path))
+        print(label,'touch' if label=='mobile' else 'mouse','tutorial/win/next/restart/pause/reload/loss screenshots',root,'page errors',errs,flush=True)
         if errs: raise AssertionError(errs)
         page.close()
     b.close()

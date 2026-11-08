@@ -184,6 +184,7 @@ func render() -> void:
     elif screen == "levels": _levels()
     elif screen == "tutorial" or screen == "game": _game()
     elif screen == "win": _win()
+    elif screen == "loss": _loss()
     elif screen == "ending": _ending()
     elif screen == "pause": _pause()
     _add(panel,"두 물건을 선택해 교환 · Z 실행 취소 · Y 다시 실행 · R 재시작 · Esc 일시정지",15,true)
@@ -255,7 +256,7 @@ func _game() -> void:
     _add(panel,("학습 %d / 2" % (tutorial_index+1)) if screen == "tutorial" else ("%02d / 12  %s" % [level_index+1,data["name"]]),27,true)
     if screen == "tutorial":
         _add(panel,"두 물건을 순서대로 탭해 위치를 교환해 보세요. 빨간 주문 카드를 초록 ✓로 바꾸면 통과!" if tutorial_index == 0 else "이웃뿐 아니라 '떨어짐'과 양옆 가격 합도 확인하세요. 첫 칸과 끝 칸도 이웃입니다.",18,true)
-    _add(panel,"교환 %d회  ·  ★★★ 기준 %d회  ·  카드 %d장" % [moves,int(data["optimal"]),cards.size()],18,true)
+    _add(panel,"교환 %d회  ·  ★★★ 기준 %d회  ·  카드 %d장%s" % [moves,int(data["optimal"]),cards.size(),"  ·  남은 교환 %d회" % (int(data["optimal"])+5-moves) if screen=="game" else ""],18,true)
     board = Control.new()
     board.custom_minimum_size = Vector2(0,340 if size.x > 400 else 300)
     panel.add_child(board)
@@ -363,6 +364,7 @@ func _select(index: int) -> void:
             _save()
             screen="win"; render()
     else:
+        if screen=="game" and moves>=int(levels[level_index]["optimal"])+5: screen="loss"
         render()
 
 func _bell() -> void:
@@ -403,6 +405,7 @@ func _redo() -> void:
             screen="win"
         elif tutorial_index==0: _start_tutorial(1); return
         else: screen="home"
+    elif screen=="game" and moves>=int(levels[level_index]["optimal"])+5: screen="loss"
     render()
 
 func _reset() -> void:
@@ -418,6 +421,14 @@ func _win() -> void:
     if level_index<11: row.add_child(_button("다음 주문 →",func(): _start_level(level_index+1),Color("d2eadb")))
     else: row.add_child(_button("완주 화면 →",func(): screen="ending"; render(),Color("d2eadb")))
     row.add_child(_button("다시 도전",func(): _start_level(level_index)))
+    row.add_child(_button("12판 선택",func(): screen="levels"; render()))
+
+func _loss() -> void:
+    _add(panel,"! 주문 실패",33,true)
+    _add(panel,"교환 %d회 · 제한 %d회" % [moves,int(levels[level_index]["optimal"])+5],22,true)
+    _add(panel,"교환 횟수가 다했습니다. 카드와 원형 진열대를 다시 살펴보세요.",19,true)
+    var row := _row(panel)
+    row.add_child(_button("다시 도전",func(): _start_level(level_index),Color("d2eadb")))
     row.add_child(_button("12판 선택",func(): screen="levels"; render()))
 
 func _ending() -> void:

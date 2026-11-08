@@ -80,6 +80,20 @@ func run() -> void:
         check(int(game.stars[k])==3,"save restore %d" % k)
     game.screen="ending"; game.render()
     check(game.stars.count(3)==12,"full completion")
+    game._start_level(0)
+    game.moves=int(game.levels[0]["optimal"])+4
+    var bad_pair := []
+    for i in range(game.ring.size()):
+        for j in range(i+1,game.ring.size()):
+            var candidate: Array = game.ring.duplicate()
+            var temp = candidate[i]; candidate[i]=candidate[j]; candidate[j]=temp
+            if not G.solved(candidate,game.cards): bad_pair=[i,j]; break
+        if not bad_pair.is_empty(): break
+    check(not bad_pair.is_empty(),"failure candidate exists")
+    game._select(bad_pair[0]); game._select(bad_pair[1])
+    check(game.screen=="loss","move limit failure")
+    game._reset()
+    check(game.screen=="game" and game.moves==0,"failure retry")
     game._start_tutorial(0)
     check(game.screen=="tutorial","tutorial one")
     game._select(1); game._select(2)
