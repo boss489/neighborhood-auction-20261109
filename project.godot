@@ -6,11 +6,12 @@ run/main_scene="res://main.tscn"
 config/description="조건 카드를 맞추는 원형 경매 퍼즐"
 
 [display]
-window/size/viewport_width=900
+window/size/viewport_width=390
 window/size/viewport_height=840
 window/size/window_width_override=900
 window/size/window_height_override=840
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [rendering]
 renderer/rendering_method="gl_compatibility"

@@ -14,9 +14,13 @@ python3 scripts/make_levels.py
 godot --headless --editor --path . --quit
 godot --headless --path . --script tests/game_test.gd
 godot --headless --path . --export-release Web docs/index.html
+python3 -m http.server 18876 --directory docs
+# 별도 셸: Playwright Chromium 설치 후
+python3 tests/browser_smoke.py
 ```
 
 Pages는 `main` 브랜치 `/docs`에서 제공하며 Web export의 `.html`, `.js`, `.wasm`, `.pck`을 배포합니다. 웹 서버로 열어야 합니다(`file://` 불가).
+브라우저 스모크 테스트는 900×840 데스크톱 마우스 및 390×844 모바일 터치를 순서대로 조작해 `evidence/`에 화면을 저장합니다. 다른 주소라면 `AUCTION_URL` 환경변수를 지정하세요. 실제 브라우저와 Godot 헤드리스 검사를 함께 실행해야 합니다.
 
 ## 자산과 라이선스
 
